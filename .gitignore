@@ -1,0 +1,11 @@
+frontened/node_modules/
+backened/node_modules/
+admin/node_modules/
+
+frontened/.env
+backened/.env
+admin/.env
+
+frontened/dist/
+admin/dist/
+backened/dist/
