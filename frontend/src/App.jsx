@@ -7,7 +7,7 @@ import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Footer from "./components/Footer/Footer";
 import LoginPopup from "./components/LoginPopup/LoginPopup";
-import Verify from "./pages/verify/verify";
+import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import AIAssistant from "./components/AIAssistant/AIAssistant";
