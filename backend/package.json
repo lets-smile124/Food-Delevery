@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "type" : "module",
+  "type": "module",
   "scripts": {
-    "server" : "nodemon server.js"
+    "server": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^2.21.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
+    "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

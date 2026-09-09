@@ -141,3 +141,304 @@
 .nav-profile-dropdown li:hover{
     color : tomato;
 }
+
+/* ================= SEARCH ================= */
+
+/* ================= SEARCH ================= */
+
+.navbar-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-search > img {
+    width: 22px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.navbar-search > img:hover {
+    transform: scale(1.1);
+}
+
+
+/* SEARCH DROPDOWN */
+
+.navbar-search-box {
+    position: absolute;
+    top: 42px;
+    right: -80px;
+
+    width: 340px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.15);
+
+    border: 1px solid #eeeeee;
+
+    overflow: hidden;
+
+    z-index: 1000;
+
+    animation: searchDrop 0.25s ease;
+}
+
+@keyframes searchDrop {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* SEARCH INPUT */
+
+.search-input-container {
+    display: flex;
+    align-items: center;
+
+    margin: 10px;
+
+    padding: 3px 8px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 25px;
+
+    transition: all 0.2s ease;
+}
+
+.search-input-container:focus-within {
+    border-color: tomato;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 99, 71, 0.1);
+}
+
+.search-input-container > img {
+    width: 18px;
+    margin: 0 7px;
+}
+
+.search-input-container input {
+    flex: 1;
+
+    border: none;
+    outline: none;
+
+    padding: 9px 5px;
+
+    font-size: 14px;
+
+    font-family: inherit;
+}
+
+.search-input-container input::placeholder {
+    color: #999;
+}
+
+
+/* CLEAR BUTTON */
+
+.search-clear {
+    border: none;
+
+    background: transparent;
+
+    color: #888;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    padding: 2px 7px;
+}
+
+.search-clear:hover {
+    color: tomato;
+}
+
+
+/* ================= SUGGESTIONS ================= */
+
+.search-suggestions {
+    padding: 5px 0 10px;
+
+    border-top: 1px solid #f1f1f1;
+}
+
+
+/* HEADING */
+
+.search-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 16px 7px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #555;
+}
+
+.search-heading button {
+    border: none;
+
+    background: transparent;
+
+    color: tomato;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.search-heading button:hover {
+    text-decoration: underline;
+}
+
+
+/* SUGGESTION */
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 9px 16px;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+.search-suggestion-item:hover {
+    background: #fff5f2;
+}
+
+
+/* RECENT ICON */
+
+.suggestion-icon {
+    font-size: 16px;
+
+    width: 25px;
+
+    text-align: center;
+}
+
+
+/* TEXT */
+
+.suggestion-text {
+    flex: 1;
+
+    font-size: 14px;
+
+    color: #333;
+}
+
+
+/* REMOVE RECENT */
+
+.remove-recent {
+    border: none;
+
+    background: transparent;
+
+    color: #aaa;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    opacity: 0;
+}
+
+.search-suggestion-item:hover .remove-recent {
+    opacity: 1;
+}
+
+.remove-recent:hover {
+    color: tomato;
+}
+
+
+/* ================= FOOD SUGGESTION ================= */
+
+.suggestion-food-image {
+    width: 42px;
+    height: 42px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+}
+
+
+.suggestion-food-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    flex: 1;
+}
+
+.suggestion-food-info span {
+    font-size: 14px;
+
+    font-weight: 500;
+
+    color: #333;
+}
+
+.suggestion-food-info small {
+    font-size: 11px;
+
+    color: #999;
+}
+
+
+.suggestion-arrow {
+    color: #aaa;
+
+    font-size: 18px;
+
+    transition: transform 0.2s ease;
+}
+
+.search-suggestion-item:hover .suggestion-arrow {
+    transform: translateX(3px);
+
+    color: tomato;
+}
+
+
+/* NO RESULTS */
+
+.no-search-results {
+    padding: 18px;
+
+    text-align: center;
+
+    color: #999;
+
+    font-size: 13px;
+}

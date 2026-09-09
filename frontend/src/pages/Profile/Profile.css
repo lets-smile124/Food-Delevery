@@ -1,0 +1,145 @@
+.profile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+
+    padding-top: 80px;
+    padding-right: 60px;
+
+    z-index: 1000;
+}
+
+.profile-popup {
+    position: relative;
+
+    width: 320px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+    animation: profilePopup 0.2s ease;
+}
+
+@keyframes profilePopup {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-close {
+    position: absolute;
+
+    top: 10px;
+    right: 12px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    color: #555;
+}
+
+.profile-avatar {
+    width: 65px;
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #f1f1f1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+
+    margin: 5px auto 15px;
+}
+
+.profile-popup h2 {
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: 22px;
+}
+
+.profile-field {
+    border-bottom: 1px solid #eee;
+
+    padding: 12px 0;
+}
+
+.profile-label {
+    display: block;
+
+    font-size: 13px;
+
+    color: #777;
+
+    margin-bottom: 4px;
+}
+
+.profile-field p {
+    margin: 0;
+
+    font-size: 15px;
+
+    color: #222;
+
+    word-break: break-word;
+}
+
+.profile-loading {
+    text-align: center;
+
+    padding: 20px 0;
+
+    color: #777;
+}
+
+.profile-logout {
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 11px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #ff4c24;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+.profile-logout:hover {
+    opacity: 0.9;
+}

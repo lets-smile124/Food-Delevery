@@ -38,16 +38,42 @@ const removeFromCart = async (req,res) =>{
 
 ///fetch user cart data
 
-const getCart = async (req,res) =>{
-   try{
-      let userData = await userModel.findById(req.body.userId)
-      let cartData = await userData.cartData;
-      res.json({success:true , cartData})
+const getCart = async (req, res) => {
+  try {
 
-   }catch(error){
-        console.log(error);
-        res.json({success:false , message:"Error"});
-   }
-}
+    console.log("USER ID:", req.body.userId);
+
+    let userData = await userModel.findById(req.body.userId);
+
+    console.log("USER DATA:", userData);
+
+    if (!userData) {
+      return res.json({
+        success: false,
+        message: "User not found",
+        cartData: {}
+      });
+    }
+
+    let cartData = userData.cartData || {};
+
+    console.log("CART DATA:", cartData);
+
+    res.json({
+      success: true,
+      cartData
+    });
+
+  } catch (error) {
+
+    console.log("GET CART ERROR:", error);
+
+    res.json({
+      success: false,
+      message: "Error",
+      cartData: {}
+    });
+  }
+};
 
 export {addToCart,removeFromCart,getCart}

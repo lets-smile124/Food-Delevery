@@ -11,7 +11,7 @@ const Header = () => {
           crafted with the finest ingredients and culinary expertise, one
           delicious meal at a time
         </p>
-        <button>View Menu</button>
+        {/* <button>View Menu</button> */}
       </div>
     </div>
   );

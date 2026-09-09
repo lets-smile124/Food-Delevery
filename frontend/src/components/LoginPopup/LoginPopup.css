@@ -1,24 +1,41 @@
-.login-popup{
-    position : absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    background-color: #00000090;
-    display: grid;
+.login-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Dark transparent layer */
+    background: rgba(0, 0, 0, 0.45);
+
+    /* Blur everything behind the popup */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
-.login-popup-container{
-    place-self: center;
-    width : max(23vw,330px);
-    color: #808080;
+
+.login-popup-container {
+    width: max(23vw, 330px);
+
     background-color: white;
+
     display: flex;
     flex-direction: column;
-    gap : 25px;
-    padding : 25px 30px;
-    border-radius: 8px;
-    font-size: 14px;
-    animation: fadeIn 0.5s;
+
+    gap: 20px;
+
+    padding: 30px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+
+    position: relative;
+
+    /* Make sure popup itself stays sharp */
+    z-index: 1001;
 }
 .login-popup-title{
     display: flex;
