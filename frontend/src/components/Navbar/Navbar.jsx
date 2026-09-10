@@ -11,7 +11,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
   const [recentSearches, setRecentSearches] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
 
-  const { getTotalCartAmount, token, setToken, food_list, userData } =
+  const { getTotalCartAmount, token, setToken, food_list, userData, url } =
     useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -288,7 +288,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
                             src={
                               item.image?.startsWith("http")
                                 ? item.image
-                                : `${import.meta.env.VITE_API_URL}/images/${item.image}`
+                                : `${url}/images/${item.image}`
                             }
                             alt=""
                           />

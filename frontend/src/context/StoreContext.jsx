@@ -19,8 +19,8 @@ const StoreContextProvider = (props) => {
   // from checking token before localStorage is loaded
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Backend URL
-  const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  // Backend URL (strips any trailing slash automatically)
+  const url = (import.meta.env.VITE_API_URL || "http://localhost:4000").replace(/\/+$/, "");
 
   // =========================
   // ADD TO CART
