@@ -29,7 +29,6 @@ app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/ai", aiRouter);
-app.use("/api/user", userRouter);
 
 // Test endpoint
 app.get("/", (req, res) => {

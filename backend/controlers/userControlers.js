@@ -26,29 +26,36 @@ export const loginUser = async (req,res) => {
     }
 
     const token = createToken(user._id)
-    res.json({success:true,token})
-  }catch(error){
+    res.json({
+      success: true,
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        address: user.address || ""
+      }
+    })
+  } catch (error) {
     console.log(error);
-    res.json({success:false,message:"Error"})
+    res.json({ success: false, message: "Error" })
   }
 }
 
-
-
 export const registerUser = async (req, res) => {
-    const {name, password, email} = req.body;
+    const { name, password, email } = req.body;
     try {
-        const exists = await userModel.findOne({email});
-        if(exists){
-            return res.json({success:false, message:"User already exists"})
+        const exists = await userModel.findOne({ email });
+        if (exists) {
+            return res.json({ success: false, message: "User already exists" })
         }
 
-        if(!validator.isEmail(email)){
-            return res.json({success:false, message:"Please enter a valid email"}) // ✅ fix 1
+        if (!validator.isEmail(email)) {
+            return res.json({ success: false, message: "Please enter a valid email" })
         }
 
-        if(password.length < 8){
-            return res.json({success:false, message:"Please enter a strong password"})
+        if (password.length < 8) {
+            return res.json({ success: false, message: "Please enter a strong password" })
         }
 
         const salt = await bcrypt.genSalt(10)
@@ -62,18 +69,28 @@ export const registerUser = async (req, res) => {
 
         const user = await newUser.save()
         const token = createToken(user._id)
-        res.json({success:true, token})
+        res.json({
+            success: true,
+            token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                address: user.address || ""
+            }
+        })
 
-    } catch(error) {
+    } catch (error) {
         console.log(error)
-        res.json({success:false, message:"Error"}) // ✅ fix 2
+        res.json({ success: false, message: "Error" })
     }
 }
 
 // Get logged-in user's profile
 export const getProfile = async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId).select(
+    const userId = req.userId || req.body?.userId;
+    const user = await userModel.findById(userId).select(
       "name email address"
     );
 
@@ -95,6 +112,41 @@ export const getProfile = async (req, res) => {
     res.json({
       success: false,
       message: "Error fetching profile",
+    });
+  }
+};
+
+// Update logged-in user's profile
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.userId || req.body?.userId;
+    const { name, address } = req.body;
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (address !== undefined) updateData.address = address;
+
+    const user = await userModel.findByIdAndUpdate(userId, updateData, { new: true }).select(
+      "name email address"
+    );
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: "Error updating profile",
     });
   }
 };

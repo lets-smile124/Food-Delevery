@@ -13,13 +13,14 @@ const StoreContextProvider = (props) => {
   const [food_list, setFoodList] = useState([]);
 
   const [token, setToken] = useState("");
+  const [userData, setUserData] = useState(null);
 
   // Used to prevent ProtectedRoute
   // from checking token before localStorage is loaded
   const [authLoading, setAuthLoading] = useState(true);
 
   // Backend URL
-  const url = import.meta.env.VITE_API_URL;
+  const url = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
   // =========================
   // ADD TO CART
@@ -182,6 +183,64 @@ const StoreContextProvider = (props) => {
   };
 
   // =========================
+  // USER PROFILE
+  // =========================
+
+  const fetchUserProfile = async (userToken) => {
+    const activeToken = userToken || token;
+    if (!activeToken) {
+      setUserData(null);
+      return null;
+    }
+
+    try {
+      const response = await axios.get(url + "/api/user/profile", {
+        headers: {
+          token: activeToken,
+        },
+      });
+
+      if (response.data.success) {
+        setUserData(response.data.user);
+        return response.data.user;
+      } else {
+        console.log("Fetch profile message:", response.data.message);
+      }
+    } catch (error) {
+      console.log("Fetch user profile error:", error.response?.data || error.message);
+    }
+    return null;
+  };
+
+  const updateUserProfile = async (updatedFields) => {
+    if (!token) return { success: false, message: "Not authenticated" };
+
+    try {
+      const response = await axios.post(
+        url + "/api/user/update-profile",
+        updatedFields,
+        {
+          headers: {
+            token,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUserData(response.data.user);
+        return { success: true, message: response.data.message, user: response.data.user };
+      }
+      return { success: false, message: response.data.message || "Failed to update" };
+    } catch (error) {
+      console.log("Update profile error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Server error while updating profile",
+      };
+    }
+  };
+
+  // =========================
   // INITIAL DATA LOAD
   // =========================
 
@@ -198,11 +257,15 @@ const StoreContextProvider = (props) => {
           // Store token in React state
           setToken(savedToken);
 
-          // Load user's cart
-          await loadCartData(savedToken);
+          // Load user's cart & profile
+          await Promise.all([
+            loadCartData(savedToken),
+            fetchUserProfile(savedToken),
+          ]);
         } else {
           // No user logged in
           setCartItems({});
+          setUserData(null);
         }
       } catch (error) {
         console.log("Initial loading error:", error);
@@ -214,6 +277,17 @@ const StoreContextProvider = (props) => {
 
     loadData();
   }, []);
+
+  // When token changes (login / logout)
+  useEffect(() => {
+    if (token) {
+      fetchUserProfile(token);
+      loadCartData(token);
+    } else {
+      setUserData(null);
+      setCartItems({});
+    }
+  }, [token]);
 
   // =========================
   // CONTEXT VALUE
@@ -233,9 +307,13 @@ const StoreContextProvider = (props) => {
     // Backend URL
     url,
 
-    // Authentication
+    // Authentication & User
     token,
     setToken,
+    userData,
+    setUserData,
+    fetchUserProfile,
+    updateUserProfile,
     authLoading,
   };
 

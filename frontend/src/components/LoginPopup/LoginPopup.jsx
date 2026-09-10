@@ -5,7 +5,7 @@ import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
 
 const LoginPopup = ({ setShowLogin }) => {
-  const { url, setToken } = useContext(StoreContext);
+  const { url, setToken, setUserData } = useContext(StoreContext);
 
   const [currState, setCurrState] = useState("Login");
 
@@ -42,6 +42,10 @@ const LoginPopup = ({ setShowLogin }) => {
       if (response.data.success) {
         // Save JWT in React state
         setToken(response.data.token);
+
+        if (response.data.user && setUserData) {
+          setUserData(response.data.user);
+        }
 
         // Save JWT in browser
         localStorage.setItem("token", response.data.token);

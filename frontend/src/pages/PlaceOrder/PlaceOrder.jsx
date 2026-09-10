@@ -8,23 +8,38 @@ const PlaceOrder = () => {
 
   const navigate = useNavigate()
 
-  const {getTotalCartAmount,token,food_list,cartItems,url} = useContext(StoreContext);
-  const [data,setData] = useState({
-    firstName :"",
-    lastName:"",
-    email:"",
-    street:"",
-    city:"",
-    state:"",
-    zipcode:"",
-    country:"",
-    phone:""
-  })
+  const { getTotalCartAmount, token, food_list, cartItems, url, userData } = useContext(StoreContext);
+  const [data, setData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    country: "",
+    phone: ""
+  });
 
-  const onChangeHandler = (event)=>{
+  useEffect(() => {
+    if (userData) {
+      const parts = (userData.name || "").trim().split(" ");
+      const firstName = parts[0] || "";
+      const lastName = parts.slice(1).join(" ") || "";
+      setData(prev => ({
+        ...prev,
+        firstName: prev.firstName || firstName,
+        lastName: prev.lastName || lastName,
+        email: prev.email || userData.email || "",
+        street: prev.street || userData.address || "",
+      }));
+    }
+  }, [userData]);
+
+  const onChangeHandler = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setData(data=>({...data,[name]:value}))
+    setData(data => ({ ...data, [name]: value }))
   }
 
 const placeOrder = async (event)=>{

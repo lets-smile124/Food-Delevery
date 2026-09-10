@@ -1,139 +1,193 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./Profile.css";
 import { StoreContext } from "../../context/StoreContext";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Profile = ({ onClose, onLogout }) => {
-    const { url, token } = useContext(StoreContext);
+    const { token, setToken, userData, fetchUserProfile, updateUserProfile } = useContext(StoreContext);
+    const navigate = useNavigate();
 
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState("");
+    const [editAddress, setEditAddress] = useState("");
+    const [saveLoading, setSaveLoading] = useState(false);
+    const [message, setMessage] = useState("");
 
-    const fetchProfile = async () => {
-        try {
-            const response = await axios.get(
-                `${url}/api/user/profile`,
-                {
-                    headers: {
-                        token: token,
-                    },
-                }
-            );
+    useEffect(() => {
+        if (userData) {
+            setEditName(userData.name || "");
+            setEditAddress(userData.address || "");
+        } else if (token) {
+            fetchUserProfile(token);
+        }
+    }, [userData, token]);
 
-            console.log("Profile response:", response.data);
+    const handleSave = async (e) => {
+        e.preventDefault();
+        setSaveLoading(true);
+        setMessage("");
 
-            if (response.data.success) {
-                setUser(response.data.user);
-            } else {
-                console.log(
-                    "Profile error:",
-                    response.data.message
-                );
-            }
+        const res = await updateUserProfile({
+            name: editName.trim(),
+            address: editAddress.trim(),
+        });
 
-        } catch (error) {
-            console.log(
-                "Profile API error:",
-                error.response?.data || error.message
-            );
-        } finally {
-            setLoading(false);
+        setSaveLoading(false);
+        if (res.success) {
+            setIsEditing(false);
+            setMessage("Profile updated successfully!");
+            setTimeout(() => setMessage(""), 3000);
+        } else {
+            setMessage(res.message || "Failed to update profile");
         }
     };
 
-    useEffect(() => {
-        if (token) {
-            fetchProfile();
+    const handleClose = () => {
+        if (onClose) {
+            onClose();
         } else {
-            setLoading(false);
+            navigate("/");
         }
-    }, [token]);
+    };
+
+    const handleLogout = () => {
+        if (onLogout) {
+            onLogout();
+        } else {
+            localStorage.removeItem("token");
+            setToken("");
+            navigate("/");
+        }
+    };
+
+    const handleOrdersClick = () => {
+        if (onClose) onClose();
+        navigate("/myorders");
+    };
+
+    const firstLetter = userData?.name ? userData.name.trim().charAt(0).toUpperCase() : "👤";
 
     return (
-        <div className="profile-overlay" onClick={onClose}>
-
-            <div
-                className="profile-popup"
-                onClick={(e) => e.stopPropagation()}
-            >
-
+        <div className="profile-overlay" onClick={handleClose}>
+            <div className="profile-popup" onClick={(e) => e.stopPropagation()}>
                 {/* CLOSE BUTTON */}
-
                 <button
                     className="profile-close"
-                    onClick={onClose}
+                    onClick={handleClose}
+                    aria-label="Close"
                 >
                     ×
                 </button>
 
                 {/* AVATAR */}
-
                 <div className="profile-avatar">
-                    👤
+                    {firstLetter}
                 </div>
 
-                <h2>My Profile</h2>
+                <h2>{userData?.name || "My Profile"}</h2>
 
-                {loading ? (
-                    <p className="profile-loading">
-                        Loading profile...
-                    </p>
+                {message && (
+                    <div className={`profile-status-msg ${message.includes("success") ? "success" : "error"}`}>
+                        {message}
+                    </div>
+                )}
+
+                {!userData ? (
+                    <p className="profile-loading">Loading profile...</p>
+                ) : isEditing ? (
+                    <form onSubmit={handleSave} className="profile-edit-form">
+                        <div className="profile-field">
+                            <span className="profile-label">Name</span>
+                            <input
+                                type="text"
+                                className="profile-input"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="profile-field">
+                            <span className="profile-label">Email (cannot change)</span>
+                            <p className="profile-readonly-email">{userData.email}</p>
+                        </div>
+
+                        <div className="profile-field">
+                            <span className="profile-label">Default Address</span>
+                            <textarea
+                                className="profile-textarea"
+                                value={editAddress}
+                                onChange={(e) => setEditAddress(e.target.value)}
+                                placeholder="Enter street, city, state, zip"
+                                rows="3"
+                            />
+                        </div>
+
+                        <div className="profile-btn-row">
+                            <button
+                                type="button"
+                                className="profile-cancel-btn"
+                                onClick={() => {
+                                    setIsEditing(false);
+                                    setEditName(userData.name || "");
+                                    setEditAddress(userData.address || "");
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="profile-save-btn"
+                                disabled={saveLoading}
+                            >
+                                {saveLoading ? "Saving..." : "Save"}
+                            </button>
+                        </div>
+                    </form>
                 ) : (
                     <>
-
-                        {/* NAME */}
-
                         <div className="profile-field">
-                            <span className="profile-label">
-                                Name
-                            </span>
-
-                            <p>
-                                {user?.name ||
-                                    "Name not available"}
-                            </p>
+                            <span className="profile-label">Name</span>
+                            <p>{userData.name || "Name not set"}</p>
                         </div>
 
-                        {/* EMAIL */}
-
                         <div className="profile-field">
-                            <span className="profile-label">
-                                Email
-                            </span>
-
-                            <p>
-                                {user?.email ||
-                                    "Email not available"}
-                            </p>
+                            <span className="profile-label">Email</span>
+                            <p>{userData.email || "Email not available"}</p>
                         </div>
 
-                        {/* ADDRESS */}
-
                         <div className="profile-field">
-                            <span className="profile-label">
-                                Address
-                            </span>
-
-                            <p>
-                                {user?.address ||
-                                    "No address added"}
-                            </p>
+                            <span className="profile-label">Address</span>
+                            <p>{userData.address || "No address added yet"}</p>
                         </div>
 
+                        <div className="profile-action-links">
+                            <button
+                                type="button"
+                                className="profile-edit-trigger"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                ✏️ Edit Profile
+                            </button>
+                            <button
+                                type="button"
+                                className="profile-orders-trigger"
+                                onClick={handleOrdersClick}
+                            >
+                                📦 My Orders
+                            </button>
+                        </div>
                     </>
                 )}
 
                 {/* LOGOUT */}
-
                 <button
                     className="profile-logout"
-                    onClick={onLogout}
+                    onClick={handleLogout}
                 >
                     Logout
                 </button>
-
             </div>
-
         </div>
     );
 };

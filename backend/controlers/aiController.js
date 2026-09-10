@@ -96,15 +96,23 @@ ${message}
         console.log("Calling Gemini...");
 
         const response = await ai.models.generateContent({
-            model: "gemini-3.7-flash",
+            model: "gemini-3.6-flash",
             contents: prompt
         });
 
         console.log("Gemini response received");
 
+        // Safely extract text from Gemini response
+        let replyText = "";
+        if (typeof response.text === "string") {
+            replyText = response.text;
+        } else if (response.candidates && response.candidates[0]) {
+            replyText = response.candidates[0].content.parts[0].text;
+        }
+
         return res.json({
             success: true,
-            reply: response.text
+            reply: replyText
         });
 
     } catch (error) {

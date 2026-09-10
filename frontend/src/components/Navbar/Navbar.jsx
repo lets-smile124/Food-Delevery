@@ -11,7 +11,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
   const [recentSearches, setRecentSearches] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
 
-  const { getTotalCartAmount, token, setToken, food_list } =
+  const { getTotalCartAmount, token, setToken, food_list, userData } =
     useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -346,18 +346,22 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
               Sign in
             </button>
           ) : (
-            <div className="navbar-profile">
-
-              {/* PROFILE ICON */}
-
+            <div
+              className="navbar-profile-btn"
+              onClick={() => setShowProfile(!showProfile)}
+              title="My Account"
+            >
+              <div className="navbar-avatar-badge">
+                {userData?.name ? userData.name.trim().charAt(0).toUpperCase() : "👤"}
+              </div>
+              <span className="navbar-username-text">
+                {userData?.name ? userData.name.split(" ")[0] : "Account"}
+              </span>
               <img
                 src={assets.profile_icon}
                 alt="Profile"
-                onClick={() =>
-                  setShowProfile(!showProfile)
-                }
+                className="navbar-profile-icon"
               />
-
             </div>
           )}
 

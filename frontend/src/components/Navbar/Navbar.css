@@ -105,9 +105,63 @@
    
 }
 
+.navbar-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff5f2;
+    border: 1.5px solid #ffd2ca;
+    padding: 6px 14px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.navbar-profile-btn:hover {
+    background: #ffebe6;
+    border-color: tomato;
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.15);
+    transform: translateY(-1px);
+}
+
+.navbar-avatar-badge {
+    width: 28px;
+    height: 28px;
+    background: tomato;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(255, 99, 71, 0.3);
+}
+
+.navbar-username-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #49557e;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar-profile-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.navbar-profile-btn:hover .navbar-profile-icon {
+    opacity: 1;
+}
+
 .navbar-profile{
     position: relative;
-
 }
 
 .nav-profile-dropdown{
