@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 /// Placing user order from frontened
 const placeOrder = async (req, res) => {
 
-  const frontened_url = process.env.FRONTEND_URL || 'http://localhost:5173'
+  const frontened_url = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
 
   try {
     const newOrder = new orderModel({
