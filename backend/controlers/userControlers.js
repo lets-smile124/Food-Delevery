@@ -117,13 +117,24 @@ class UserController extends BaseController {
         name,
       });
 
+      if (!emailResult.success || !emailResult.live) {
+        // Remove the OTP record because the email was not sent.
+        await this.otpModel.deleteOne({
+          email: cleanEmail,
+          purpose,
+          otp: generatedOtp,
+        });
+
+        return this.sendError(
+          res,
+          "Unable to send verification email. Please try again later."
+        );
+      }
+
       return this.sendSuccess(res, {
-        message: emailResult.live
-          ? `Verification code sent to ${cleanEmail}`
-          : `Verification code generated for ${cleanEmail}`,
+        message: `Verification code sent to ${cleanEmail}`,
         email: cleanEmail,
-        isLive: !!emailResult.live,
-        devOtp: emailResult.live ? undefined : generatedOtp,
+        isLive: true,
       });
     } catch (error) {
       return this.handleError(res, error, "Failed to send verification code");
