@@ -1,584 +1,407 @@
 # 🍔 Tomato — Full-Stack Food Delivery Platform
 
-A full-stack food delivery platform built with the **MERN stack**, featuring **JWT authentication, Stripe online payments, delivery address management, an AI-powered food assistant, and a dedicated admin dashboard**. Users can browse food items, manage their cart, place orders, make secure online payments, and track their orders, while administrators can manage food items and customer orders.
+A modern, full-stack food delivery platform built with the **MERN stack**, featuring **JWT & OTP authentication, Stripe payments, comprehensive user & admin profile management, address book, dietary preferences, an AI culinary assistant, and an administrative restaurant operations dashboard**.
+
+Customers can explore food items with customizable portions, manage their cart with a floating quick bar, apply first-time promo codes, securely complete checkout with Stripe, track live orders, and manage their profile and delivery addresses. Administrators have full control over food items, orders, restaurant operational settings, delivery charges, and store profiles.
 
 ---
 
 ## 🚀 Features
 
-### 👤 User Features
+### 👤 Customer Features
 
-* 🔐 **JWT Authentication** — Secure user registration and login with token-based authentication
-* 🍕 **Food Browsing** — Browse available food items by category
-* 🛒 **Shopping Cart** — Add, remove, and manage food items
-* 📍 **Delivery Address** — Capture complete delivery information during checkout
-* 💳 **Stripe Payments** — Secure online payments through Stripe Checkout
-* 📦 **Order Management** — View order history and current order status
-* 🔄 **Payment Verification** — Verify Stripe payments before confirming orders
-* 🤖 **AI Food Assistant** — AI-powered conversational assistant for food-related user queries
-* 🔔 **Toast Notifications** — Real-time feedback for user actions
+* 🔐 **Authentication & Security** — Secure registration and login with JWT and bcrypt password hashing.
+* 📧 **Email OTP Verification** — 6-digit OTP verification via Nodemailer for new account registration and password resets.
+* 👤 **Complete Profile Management**:
+  * View and update personal information (full name, phone, date of birth).
+  * Email verification status indicator.
+  * Profile picture upload and deletion with Cloudinary and fallback initials avatar.
+* 📍 **Multiple Delivery Addresses**:
+  * Add, edit, and delete categorized delivery addresses (Home, Work, Other).
+  * Set a default address for 1-click checkout.
+  * Store house number, street, city, state, zip code, landmark, and delivery instructions.
+* 🍽️ **Portion Selection & Food Details** — Modal popups for food items with portion sizes (Small, Medium, Large) and dynamic pricing.
+* 🛒 **Smart Shopping Cart** — Real-time cart calculations, item increment/decrement, and a floating quick-access cart bar during menu browsing.
+* 🎟️ **First-Time Promo Code** — `new_user` promo granting a 20% discount exclusively on the customer's first order.
+* 💳 **Stripe Payments** — Seamless online payments through Stripe Checkout with server-side verification.
+* 📦 **Order Tracking & History**:
+  * Track active order status (*Food Processing* → *Out for delivery* → *Delivered*).
+  * Filter order history by status (*All*, *Processing*, *Delivered*, *Cancelled*).
+  * Option to delete delivered orders from personal history.
+* 🥗 **Dietary & Dining Preferences** — Save food preferences (Veg, Non-Veg, Vegan, Jain), food allergies, language, and notification settings.
+* 🤖 **AI Culinary Assistant** — Conversational AI assistant powered by Google Gemini for dish recommendations, dietary inquiries, and meal suggestions.
 
-### 👨‍💼 Admin Features
+### 👨‍💼 Administrator Features
 
-* 📊 **Admin Dashboard** — Dedicated dashboard for managing the platform
-* 🍔 **Food Management** — Add, list, and remove food items
-* 🖼️ **Image Uploads** — Upload food images using Multer
-* 📦 **Order Management** — View all customer orders
-* 🔄 **Order Status Updates** — Update the status of customer orders
+* 📊 **Admin Dashboard** — Clean, dedicated administrative console for restaurant and catalog management.
+* 🍔 **Food Catalog Management** — Add new food items with image uploads, list all dishes, and remove items with real-time UI updates.
+* 📦 **Order Fulfillment**:
+  * Live list of customer orders with itemized breakdowns and customer delivery addresses.
+  * Status updater (*Food Processing*, *Out for delivery*, *Delivered*).
+  * Ability to delete completed or cancelled orders from the administrative log.
+* ⚙️ **Store & Admin Profile Management**:
+  * Manage restaurant manager information, bio, and admin avatar (upload & delete).
+  * Configure restaurant operational details: store name, address, support phone/email, operating hours, delivery fees, minimum order values, and estimated delivery times.
+  * Store open/close toggle switch for accepting orders.
+  * Change admin security passcodes with live strength validation.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer              | Technologies                                  |
-| ------------------ | --------------------------------------------- |
-| **Frontend**       | React.js, React Router DOM, Context API       |
-| **Backend**        | Node.js, Express.js                           |
-| **Database**       | MongoDB, Mongoose                             |
-| **Authentication** | JWT, bcrypt                                   |
-| **Payments**       | Stripe Checkout                               |
-| **AI**             | AI-powered conversational assistant / LLM API |
-| **HTTP Client**    | Axios                                         |
-| **File Uploads**   | Multer                                        |
-| **Notifications**  | React Toastify                                |
-| **Deployment**     | Render                                        |
-| **Development**    | Vite, Git, GitHub                             |
+| Layer | Technologies |
+| --- | --- |
+| **Frontend** | React 18, React Router DOM v6, Vite, Context API, Vanilla CSS |
+| **Admin Dashboard** | React 18, React Router DOM v6, Vite, Axios |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB Atlas, Mongoose ODM |
+| **Authentication** | JSON Web Tokens (JWT), bcryptjs |
+| **Email Services** | Nodemailer (SMTP OTP & welcome email dispatch) |
+| **Media & Storage** | Cloudinary API, Multer (Memory & Disk Storage) |
+| **Payments** | Stripe Checkout API |
+| **AI Integration** | Google Gemini Generative AI API |
+| **HTTP Client** | Axios |
+| **Feedback & Notifications** | React Toastify |
+| **Deployment Ready** | Vercel (Frontend & Admin), Render (Backend) |
 
 ---
 
 ## 🏗️ Project Architecture
 
-The application consists of three main parts:
+The repository is organized as a clean, decoupled monorepo:
 
 ```text
 Tomato/
 │
-├── frontend/                    # User-facing React application
+├── frontend/                         # Customer-facing React SPA (Vite)
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   ├── header_img.png
+│   │   ├── icons.svg
+│   │   └── _redirects
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar/
-│   │   │   ├── Footer/
-│   │   │   ├── FoodItem/
-│   │   │   └── LoginPopup/
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── Home/
-│   │   │   ├── Cart/
-│   │   │   ├── PlaceOrder/
-│   │   │   ├── MyOrders/
-│   │   │   └── Verify/
-│   │   │
-│   │   └── context/
-│   │       └── StoreContext.jsx
-│   │
-│   └── package.json
+│   │   ├── assets/                   # Images, food photos, icons & brand graphics
+│   │   ├── components/               # Reusable UI components
+│   │   │   ├── AIAssistant/          # Floating AI chat assistant modal & trigger
+│   │   │   ├── AIExperience/         # AI culinary banner & feature showcase
+│   │   │   ├── AppDownload/          # Mobile app download CTA section
+│   │   │   ├── ExploreMenu/          # Category filter navigation & scroll list
+│   │   │   ├── FloatingCartBar/      # Sticky bottom floating cart preview & checkout pill
+│   │   │   ├── FoodDetailModal/      # Item preview modal with size selection & pricing
+│   │   │   ├── FoodDisplay/          # Grid displaying categorized food cards
+│   │   │   ├── FoodItem/             # Individual dish card with add/remove counters
+│   │   │   ├── Footer/               # Brand footer with links and contact info
+│   │   │   ├── GuestLanding/         # Hero banner & value proposition for guests
+│   │   │   ├── Header/               # Landing hero banner with call to action
+│   │   │   ├── LoginPopup/           # Auth popup (Sign Up, Sign In, OTP, Forgot Password)
+│   │   │   ├── Navbar/               # Responsive header navbar, cart icon, user profile menu
+│   │   │   └── ProtectedRoute/       # Route guard for authenticated customer pages
+│   │   ├── context/
+│   │   │   └── StoreContext.jsx      # Global state (cart, auth token, food list, pricing)
+│   │   ├── pages/                    # Routed application views
+│   │   │   ├── Cart/                 # Cart breakdown, promo code (new_user), summary
+│   │   │   ├── Home/                 # Landing view with category carousel and food grid
+│   │   │   ├── MyOrders/             # Customer order history, status tracking & deletion
+│   │   │   ├── PlaceOrder/           # Checkout form, address selection & payment initiation
+│   │   │   ├── Profile/              # Comprehensive Profile Dashboard (Profile, Addresses, Security, Preferences)
+│   │   │   └── Verify/               # Stripe payment verification redirect handler
+│   │   ├── services/                 # Modular API service layer
+│   │   │   ├── AIService.js          # AI Assistant chat API integration
+│   │   │   ├── BaseApiService.js     # Axios client configuration & base headers
+│   │   │   ├── CartService.js        # Cart sync endpoints
+│   │   │   ├── FoodPricingService.js # Portion size & discount calculations
+│   │   │   ├── FoodService.js        # Food catalog queries
+│   │   │   ├── OrderService.js       # Order creation, verification, history & removal
+│   │   │   └── UserService.js        # Profile, address book, preferences & security APIs
+│   │   ├── utils/
+│   │   │   └── CartCalculator.js     # Cart totals, taxes & promo calculations
+│   │   ├── App.jsx                   # Main layout routing configuration
+│   │   ├── App.css
+│   │   ├── index.css                 # Global styling, tokens & CSS variables
+│   │   └── main.jsx                  # Application entry point
+│   ├── .env                          # Frontend environment variables (VITE_API_URL)
+│   ├── package.json
+│   └── vite.config.js
 │
-├── admin/                       # Admin dashboard
+├── admin/                            # Administrative Management Dashboard (Vite)
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   └── icons.svg
 │   ├── src/
+│   │   ├── assets/                   # Admin UI icons, parcel graphics & logos
 │   │   ├── components/
+│   │   │   ├── Navbar/               # Admin top navbar with store brand & manager profile pill
+│   │   │   └── Sidebar/              # Navigation sidebar (Add, List, Orders, Profile)
 │   │   ├── pages/
-│   │   │   ├── Add/
-│   │   │   ├── List/
-│   │   │   └── Orders/
-│   │   └── ...
-│   │
-│   └── package.json
+│   │   │   ├── Add/                  # Add new food item form with image upload
+│   │   │   ├── List/                 # Food inventory list with delete action
+│   │   │   ├── Orders/               # Order fulfillment management & live status updates
+│   │   │   └── Profile/              # Admin profile, restaurant operations & security settings
+│   │   ├── App.jsx                   # Admin app routing and view layout
+│   │   ├── App.css
+│   │   ├── index.css                 # Admin panel design tokens & styles
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
 │
-└── backend/                     # Express REST API
+└── backend/                          # Node.js & Express REST API Server
     ├── config/
-    │   └── db.js
-    │
-    ├── controllers/
-    │   ├── foodController.js
-    │   ├── orderController.js
-    │   └── userController.js
-    │
+    │   ├── cloudinary.js             # Cloudinary SDK credentials & setup
+    │   ├── db.js                     # MongoDB connection initialization via Mongoose
+    │   └── uploadToCloudinary.js      # Buffer/stream avatar upload pipeline
+    ├── controlers/                   # Express request handlers & business logic
+    │   ├── adminController.js        # Admin profile, store operations & security logic
+    │   ├── aiController.js           # Google Gemini AI assistant processing
+    │   ├── BaseController.js         # Base controller utility
+    │   ├── cartControler.js          # Cart item additions, removals & sync
+    │   ├── foodControlers.js         # Food catalog CRUD & image persistence
+    │   ├── orderControler.js         # Order placement, Stripe session, status & deletion
+    │   └── userControlers.js         # Auth, OTP, profile, addresses, preferences & password
     ├── middleware/
-    │   └── auth.js
-    │
-    ├── models/
-    │   ├── foodModel.js
-    │   ├── orderModel.js
-    │   └── userModel.js
-    │
-    ├── routes/
-    │   ├── foodRoute.js
-    │   ├── orderRoute.js
-    │   └── userRoute.js
-    │
-    ├── uploads/
-    ├── server.js
-    └── .env
+    │   └── auth.js                   # JWT authentication token verification middleware
+    ├── models/                       # Mongoose data schemas
+    │   ├── adminModel.js             # Admin manager info & restaurant operational settings
+    │   ├── foodModels.js             # Food items schema (name, description, price, category, image)
+    │   ├── orderModel.js             # Order schema (items, amount, address, payment, status)
+    │   ├── otpModel.js               # One-time password verification codes with TTL
+    │   └── userModel.js              # User schema (profile, addresses, preferences, avatar)
+    ├── routes/                       # Express API route declarations
+    │   ├── adminRoute.js             # /api/admin endpoints
+    │   ├── aiRoute.js                # /api/ai chat endpoints
+    │   ├── cartRoute.js              # /api/cart endpoints
+    │   ├── foodRoute.js              # /api/food endpoints
+    │   ├── orderRoute.js             # /api/order endpoints
+    │   └── userRoute.js              # /api/user endpoints
+    ├── services/                     # Standalone business & integration services
+    │   ├── AIService.js              # Gemini API prompt formatting & response streaming
+    │   ├── EmailService.js           # Nodemailer SMTP & OTP email delivery
+    │   └── MediaService.js           # Media upload & Cloudinary asset management
+    ├── uploads/                      # Local uploaded media directory (static serving)
+    ├── App.js                        # Express application configuration & middleware mount
+    ├── server.js                     # HTTP server bootstrapper & DB connection trigger
+    ├── .env                          # Backend secrets (Mongo, JWT, Stripe, Gemini, Email, Cloudinary)
+    └── package.json
 ```
 
 ---
 
-# 🔐 Authentication & Authorization
+# 🔐 Authentication & Security
 
-The application uses **JWT-based authentication** to secure user-specific operations.
-
-### Authentication Flow
+The platform combines **JWT token-based authentication** with **Email OTP verification**:
 
 ```text
-User Registration
-       ↓
-Password hashed using bcrypt
-       ↓
-User Login
-       ↓
-JWT generated
-       ↓
-Token stored on frontend
-       ↓
-Token sent with protected requests
-       ↓
-Backend authentication middleware
-       ↓
-JWT verification
-       ↓
-Authenticated request processed
+User Registration / Forgot Password
+                 ↓
+      OTP generated & saved with TTL
+                 ↓
+Nodemailer sends 6-digit OTP to user's email
+                 ↓
+      User submits OTP verification
+                 ↓
+Password hashed using bcrypt & user stored
+                 ↓
+          JWT token issued
+                 ↓
+Stored in client localStorage & attached via Authorization header
+                 ↓
+    Verified by auth.js middleware for protected routes
 ```
-
-The authentication middleware verifies the JWT using the server-side `JWT_SECRET` and attaches the authenticated user's ID to the request.
 
 ---
 
-# 🛒 Cart & Order Flow
-
-The complete ordering process is:
+# 🛒 Cart, Portions & Checkout Flow
 
 ```text
-Browse Food
-     ↓
-Add Items to Cart
-     ↓
-Review Cart
-     ↓
-Enter Delivery Address
-     ↓
-Place Order
-     ↓
-Create Stripe Checkout Session
-     ↓
-Complete Payment
-     ↓
-Redirect to Verification Page
-     ↓
-Verify Payment
-     ↓
-Confirm Order
-     ↓
-View Order History
-```
-
-The **React Context API** is used to manage global frontend state such as food items, cart items, authentication tokens, and cart operations.
-
----
-
-# 💳 Stripe Payment Integration
-
-The application integrates **Stripe Checkout** for online payments.
-
-### Payment Flow
-
-1. User reviews the cart and enters delivery information.
-2. The frontend sends the order information to the backend.
-3. The backend creates the order and prepares Stripe `line_items`.
-4. Food prices are converted from INR to paise.
-5. The user is redirected to Stripe Checkout.
-6. Stripe processes the payment.
-7. Stripe redirects the user back to the application's verification page.
-8. The backend verifies the payment.
-9. The order is confirmed after successful payment verification.
-
-Stripe secret credentials are stored in environment variables and are never exposed to the frontend.
-
----
-
-# 🤖 AI Food Assistant
-
-Tomato also includes an **AI-powered conversational assistant** integrated into the food-delivery platform.
-
-The assistant allows users to enter food-related queries and receive AI-generated responses through the application.
-
-### AI Flow
-
-```text
-User Query
-     ↓
-React Frontend
-     ↓
-Backend API
-     ↓
-AI / LLM Service
-     ↓
-Generated Response
-     ↓
-Frontend
-     ↓
-User
-```
-
-The AI assistant is designed to provide a more interactive experience instead of limiting users to traditional food browsing and ordering workflows.
-
-### Potential Extensions
-
-The assistant can be further extended to support:
-
-* Personalized food recommendations
-* Context-aware recommendations based on cart items
-* Dietary and nutritional information
-* Multilingual food assistance
-* Order-related conversational assistance
-
----
-
-# 📍 Delivery Address Management
-
-Delivery information is captured during checkout and stored with the corresponding order.
-
-The order structure supports fields such as:
-
-```text
-firstName
-lastName
-email
-street
-city
-state
-zipCode
-country
-phone
-```
-
-Mongoose schema definitions ensure that the expected address fields are explicitly represented in the order data.
-
----
-
-# 📦 Order Management
-
-### User
-
-Users can:
-
-* Place food orders
-* View previous orders
-* View order details
-* Track order status
-* View delivery information
-
-### Admin
-
-Administrators can:
-
-* View all customer orders
-* View order details
-* Update order status
-* Manage food items
-* Upload food images
-
-### Order Lifecycle
-
-```text
-Processing
-    ↓
-Out for Delivery
-    ↓
-Delivered
+Browse Food Catalog
+        ↓
+Select Portion Size (Small / Medium / Large)
+        ↓
+Add Items (reflected in Navbar & Floating Cart Bar)
+        ↓
+Review Cart (Apply "new_user" first-order promo)
+        ↓
+Select Saved Address or Enter New Delivery Details
+        ↓
+Stripe Checkout Session Created
+        ↓
+Customer Completes Payment
+        ↓
+Verify Redirect (/verify?success=true&orderId=...)
+        ↓
+Order Confirmed & Sent to Admin Dashboard
+        ↓
+Track Status in "My Orders" or "Profile > Orders"
 ```
 
 ---
 
-# 🖼️ Food Image Upload
+# 🔌 REST API Specification
 
-The admin application supports food image uploads.
+### 👤 User & Profile Endpoints (`/api/user`)
 
-The backend uses **Multer** to process multipart form-data and store uploaded food images in the `uploads` directory.
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `POST` | `/api/user/register` | Register a new user | No |
+| `POST` | `/api/user/login` | Login and receive JWT | No |
+| `POST` | `/api/user/send-otp` | Request a 6-digit registration OTP | No |
+| `POST` | `/api/user/verify-otp` | Verify registration OTP code | No |
+| `POST` | `/api/user/forgot-password-otp`| Request password reset OTP | No |
+| `POST` | `/api/user/reset-password-otp` | Reset password using verified OTP | No |
+| `GET` | `/api/user/profile` | Retrieve authenticated user profile | **Yes** |
+| `POST` | `/api/user/profile` | Update personal information (name, phone, DOB) | **Yes** |
+| `POST` | `/api/user/address` | Add a new delivery address | **Yes** |
+| `PUT` | `/api/user/address` | Edit an existing delivery address | **Yes** |
+| `DELETE` | `/api/user/address` | Delete a delivery address | **Yes** |
+| `PUT` | `/api/user/address/default` | Set an address as default | **Yes** |
+| `POST` | `/api/user/preferences` | Update dietary, allergy & notification preferences | **Yes** |
+| `POST` | `/api/user/change-password` | Update password with current password verification | **Yes** |
+| `POST` | `/api/user/delete-account` | Permanently delete user account and data | **Yes** |
+| `POST` | `/api/user/upload-avatar` | Upload profile photo (Cloudinary / buffer) | **Yes** |
+| `POST` | `/api/user/delete-avatar` | Remove profile photo and reset to initials avatar | **Yes** |
 
-The Express server exposes these uploaded images through a static route so that they can be accessed by the frontend.
+### 👨‍💼 Admin Management Endpoints (`/api/admin`)
 
----
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `GET` | `/api/admin/profile` | Fetch manager profile & restaurant operational details | No |
+| `POST` | `/api/admin/profile` | Update manager details & restaurant configuration | No |
+| `POST` | `/api/admin/upload-avatar` | Upload admin profile picture | No |
+| `POST` | `/api/admin/delete-avatar` | Delete admin profile picture | No |
+| `POST` | `/api/admin/security` | Update admin passcode with validation | No |
 
-# 🔌 REST API
+### 🍔 Food Catalog Endpoints (`/api/food`)
 
-## 👤 User APIs
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `POST` | `/api/food/add` | Add a new food item with image upload | No |
+| `GET` | `/api/food/list` | Retrieve list of all available food items | No |
+| `POST` | `/api/food/remove` | Delete a food item by ID | No |
 
-| Method | Endpoint             | Description           |
-| ------ | -------------------- | --------------------- |
-| `POST` | `/api/user/register` | Register a new user   |
-| `POST` | `/api/user/login`    | Login and receive JWT |
+### 🛒 Cart Endpoints (`/api/cart`)
 
-## 🍔 Food APIs
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `POST` | `/api/cart/add` | Add or increment item in user cart | **Yes** |
+| `POST` | `/api/cart/remove` | Decrement or remove item from user cart | **Yes** |
+| `POST` | `/api/cart/get` | Retrieve the authenticated user's cart | **Yes** |
 
-| Method | Endpoint           | Description         |
-| ------ | ------------------ | ------------------- |
-| `POST` | `/api/food/add`    | Add a food item     |
-| `GET`  | `/api/food/list`   | Retrieve food items |
-| `POST` | `/api/food/remove` | Remove a food item  |
+### 📦 Order Endpoints (`/api/order`)
 
-## 🛒 Cart APIs
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `POST` | `/api/order/place` | Place order and create Stripe checkout session | **Yes** |
+| `POST` | `/api/order/verify` | Verify Stripe payment success and confirm order | No |
+| `POST` | `/api/order/userorders` | Retrieve authenticated customer's orders | **Yes** |
+| `POST` | `/api/order/user-delete` | Delete delivered order from customer history | **Yes** |
+| `GET` | `/api/order/list` | Retrieve all customer orders for admin panel | No |
+| `POST` | `/api/order/status` | Update fulfillment status (*Processing* / *Delivered*) | No |
+| `POST` | `/api/order/remove` | Permanently remove order record (Admin) | No |
 
-| Method | Endpoint           | Description              |
-| ------ | ------------------ | ------------------------ |
-| `POST` | `/api/cart/add`    | Add an item to cart      |
-| `POST` | `/api/cart/remove` | Remove an item from cart |
-| `POST` | `/api/cart/get`    | Retrieve user's cart     |
+### 🤖 AI Culinary Assistant Endpoints (`/api/ai`)
 
-## 📦 Order APIs
-
-| Method | Endpoint                | Description                          |
-| ------ | ----------------------- | ------------------------------------ |
-| `POST` | `/api/order/place`      | Create an order and initiate payment |
-| `POST` | `/api/order/verify`     | Verify Stripe payment                |
-| `POST` | `/api/order/userorders` | Retrieve user's orders               |
-| `GET`  | `/api/order/list`       | Retrieve all orders for admin        |
-| `POST` | `/api/order/status`     | Update order status                  |
-
----
-
-# 🧠 Key Implementation Concepts
-
-### React Context API
-
-Global state is managed using `StoreContext`, including:
-
-* Food list
-* Cart items
-* Authentication token
-* Cart operations
-
-### JWT + bcrypt
-
-Passwords are hashed using **bcrypt**, while JWT tokens are used to authenticate protected requests.
-
-### Express REST APIs
-
-The backend follows a modular architecture:
-
-```text
-Routes
-  ↓
-Controllers
-  ↓
-Models
-  ↓
-MongoDB
-```
-
-This separates routing, business logic, and database operations.
-
-### Mongoose
-
-Mongoose is used for:
-
-* Schema definition
-* Data validation
-* MongoDB operations
-* User, food, and order models
-
-### Axios
-
-Axios handles communication between the React frontend and Express backend.
-
-### Multer
-
-Multer processes food image uploads from the admin dashboard.
-
-### Stripe
-
-Stripe Checkout handles secure online payment processing and payment verification.
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | :---: |
+| `POST` | `/api/ai/chat` | Send conversational culinary query to Gemini AI | No |
 
 ---
 
-# ⚙️ Environment Variables
+## ⚙️ Environment Variables
 
-Create a `.env` file inside the `backend` directory:
+### Backend Configuration (`backend/.env`)
 
 ```env
 PORT=4000
+MONGO_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_secure_jwt_secret_key
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 
-MONGODB_URI=your_mongodb_connection_string
+# Google Gemini AI Integration
+GEMINI_API_KEY=your_google_gemini_api_key
 
-JWT_SECRET=your_jwt_secret
+# Nodemailer SMTP Email Credentials (for OTP & Notifications)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
 
-STRIPE_SECRET_KEY=your_stripe_secret_key
-
-# Add your AI/LLM API key if required by the configured AI service
-AI_API_KEY=your_ai_api_key
+# Cloudinary Storage (for Avatars & Food Images)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-> ⚠️ **Never commit `.env` files or API keys to GitHub.**
+### Frontend Configuration (`frontend/.env`)
+
+```env
+VITE_API_URL=http://localhost:4000
+```
 
 ---
 
-# 🚀 Getting Started
+## 🚀 Getting Started
 
-## Prerequisites
+### Prerequisites
 
-Make sure you have:
+* **Node.js** (v18.0 or newer recommended)
+* **MongoDB** (Atlas cluster or local instance)
+* **Stripe Account** (Test API keys)
+* **Google Gemini API Key** (Google AI Studio)
+* **Gmail App Password** (for Nodemailer SMTP OTP)
+* **Cloudinary Account** (for cloud image storage)
 
-* Node.js
-* MongoDB Atlas account
-* Stripe account
-* Required AI/LLM API credentials
-* Git
-
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/lets-smile124/Food-Delevery.git
-
 cd Food-Delevery
 ```
 
-## 2. Setup Backend
+### 2. Setup and Run Backend
 
 ```bash
 cd backend
 npm install
-```
-
-Create the `.env` file and configure the required environment variables.
-
-Start the backend:
-
-```bash
+# Ensure .env is populated with credentials
 npm run server
 ```
 
-Backend:
+The backend server starts on `http://localhost:4000`.
 
-```text
-http://localhost:4000
-```
-
-## 3. Setup Frontend
-
-Open another terminal:
+### 3. Setup and Run Frontend (Customer App)
 
 ```bash
-cd frontend
+cd ../frontend
 npm install
 npm run dev
 ```
 
-## 4. Setup Admin Panel
+The customer application starts on `http://localhost:5173`.
 
-Open another terminal:
+### 4. Setup and Run Admin Dashboard
 
 ```bash
-cd admin
+cd ../admin
 npm install
 npm run dev
 ```
 
----
-
-# 🌐 Application Architecture
-
-```text
-                         ┌──────────────────┐
-                         │      User        │
-                         │     Frontend     │
-                         └────────┬─────────┘
-                                  │
-                         REST API / Axios
-                                  │
-                                  ↓
-                         ┌──────────────────┐
-                         │     Express      │
-                         │     Backend      │
-                         └───────┬──┬───┬───┘
-                                 │  │   │
-                  ┌──────────────┘  │   └──────────────┐
-                  ↓                 ↓                  ↓
-          ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-          │   MongoDB   │   │   Stripe    │   │ AI / LLM    │
-          │   Database  │   │  Payments   │   │   Service   │
-          └─────────────┘   └─────────────┘   └─────────────┘
-                  ↑
-                  │
-          ┌───────┴───────┐
-          │     Admin     │
-          │     Panel     │
-          └───────────────┘
-```
+The admin dashboard starts on `http://localhost:5174`.
 
 ---
 
-# 🐛 Development & Debugging
+## 🔒 Security Practices
 
-During development, several integration issues were identified and resolved, including:
-
-* Fixed `fetchrders` → `fetchOrders` function naming issue
-* Fixed `paument` → `payment` schema field typo
-* Corrected Stripe `unit_amount` handling for INR
-* Removed incorrect USD-to-INR conversion
-* Fixed React Router `pathh` → `path` typo
-* Added delivery address fields to the order schema
-* Fixed JWT authentication and token handling
-* Configured MongoDB Atlas connection
-* Configured environment variables for sensitive credentials
-* Implemented Multer-based image uploads
-* Debugged frontend/backend API communication
-* Implemented Stripe payment verification
-* Fixed protected-route authentication issues
-* Debugged frontend routing and refresh-related issues
-* Integrated and debugged the AI assistant API flow
+* **Zero Plain-Text Passwords** — Hashed using bcryptjs with salt rounds.
+* **JWT Protected Endpoints** — Strict authorization middleware extracting user identity from tokens.
+* **OTP Rate-Limiting & Expiry** — MongoDB OTP collection with TTL auto-expiration.
+* **Server-Side Payment Verification** — Stripe webhook/redirection validation preventing unauthorized order placement.
+* **First-Time Promo Verification** — Verified directly in MongoDB against customer order records before applying discounts.
+* **Data Privacy** — Sensitive credentials strictly encapsulated in `.env` and excluded via `.gitignore`.
 
 ---
 
-# 🔒 Security
-
-The application implements several basic security practices:
-
-* Password hashing using **bcrypt**
-* JWT-based authentication
-* Protected backend routes
-* Environment variables for sensitive credentials
-* `.env` excluded from Git
-* Stripe secret key kept on the backend
-* MongoDB credentials kept outside source code
-* Server-side payment verification
-
----
-
-
-# 🚀 Future Improvements
-
-* 🔎 Advanced food search and filtering
-* ⭐ Food ratings and reviews
-* ❤️ Wishlist functionality
-* 📧 Email notifications
-* 🔔 Real-time order notifications
-* 📊 Advanced admin analytics
-* 🧾 Invoice generation
-* 🗺️ Real-time delivery tracking
-* 🤖 Personalized AI food recommendations
-* 🌐 Multilingual AI assistance
-* 🧪 Automated unit and API testing
-* 🐳 Docker-based deployment
-
----
-
-# 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome.
-
-For major changes, please open an issue first to discuss the proposed changes.
-
----
-
-# 📄 License
+## 📄 License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-# ❤️ Acknowledgement
-
-Tomato was developed as a full-stack project to gain practical experience with **React, Node.js, Express, MongoDB, REST APIs, authentication, payment gateway integration, file uploads, and AI integration**.
-
----
-
-**Made with ❤️ and a lot of debugging.**
+**Made with ❤️ and modern MERN architecture.**
