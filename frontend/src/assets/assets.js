@@ -1,4 +1,5 @@
 import logo from "./logo.png";
+import CraveBox from "./CraveBox.png";
 import add_icon from "./add_icon.png";
 import order_icon from "./order_icon.png";
 import profile_image from "./profile_image.png";
@@ -68,6 +69,8 @@ import food_32 from "./food_32.png";
 
 export const assets = {
   logo,
+  cravebox_logo: CraveBox,
+  old_logo: logo,
   add_icon,
   order_icon,
   profile_image,
@@ -91,7 +94,39 @@ export const assets = {
   selector_icon,
   twitter_icon,
   vite,
-  logout_icon
+  logout_icon,
+  food_1,
+  food_2,
+  food_3,
+  food_4,
+  food_5,
+  food_6,
+  food_7,
+  food_8,
+  food_9,
+  food_10,
+  food_11,
+  food_12,
+  food_13,
+  food_14,
+  food_15,
+  food_16,
+  food_17,
+  food_18,
+  food_19,
+  food_20,
+  food_21,
+  food_22,
+  food_23,
+  food_24,
+  food_25,
+  food_26,
+  food_27,
+  food_28,
+  food_29,
+  food_30,
+  food_31,
+  food_32
 };
 
 export const menu_list = [
@@ -305,7 +340,7 @@ export const food_list = [
     _id: "21",
     name: "Garlic Mushrooms",
     image: food_21,
-    description: "Fresh mushrooms sautéed with aromatic garlic and herbs for a flavorful, savory bite.",
+    description: "Fresh mushrooms sautAced with aromatic garlic and herbs for a flavorful, savory bite.",
     category: "Pure Veg",
     price: 260,
   },

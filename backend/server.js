@@ -1,41 +1,16 @@
-import express from "express";
-import cors from "cors";
-import { connectDB } from "./config/db.js";
-import foodRouter from "./routes/foodRoute.js";
-import userRouter from "./routes/userRoute.js";
 import dotenv from "dotenv";
-import cartRouter from "./routes/cartRoute.js";
-import orderRouter from "./routes/orderRoute.js";
-import aiRouter from "./routes/aiRoute.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
+// Load environment variables reliably from backend directory
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, ".env") });
+dotenv.config(); // fallback
 
-dotenv.config();
+import App from "./App.js";
 
-// App config
-const app = express();
-const port = process.env.PORT || 4000;
+// Initialize and start application
+const app = new App();
+app.start();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
-
-// DB connection
-connectDB();
-
-// API endpoints
-app.use("/api/food", foodRouter);
-app.use("/images", express.static("uploads"));
-app.use("/api/user", userRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/order", orderRouter);
-app.use("/api/ai", aiRouter);
-
-// Test endpoint
-app.get("/", (req, res) => {
-    res.send("API working");
-});
-
-// Start server
-app.listen(port, "0.0.0.0", () => {
-    console.log(`Server started on port ${port}`);
-});
+export default app;

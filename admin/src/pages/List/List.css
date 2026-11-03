@@ -1,28 +1,247 @@
-.list-table-format{
-    display : grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 0.5fr;
-    align-items: center;
-    gap : 10px;
-    padding : 12px 15px;
-    border : 1px solid #cacaca;
-    font-size : 13px;
+.admin-list-page {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.list-table-format.title{
-    background-color: #f9f9f9;
+.list-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.list-table-format img{
-    width : 50px;
+.list-page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--admin-dark);
+  letter-spacing: -0.02em;
 }
 
-@media (max-width:600px){
-    .list-table-format{
-        grid-template-columns: 1fr 3fr 1fr;
-        gap : 15px;
-    }
-    .list-table-format.title{
-        display:none;
-    }
+.list-page-subtitle {
+  font-size: 14px;
+  color: var(--admin-muted);
+  margin-top: 4px;
 }
 
+.add-dish-shortcut-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--admin-primary);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+  text-decoration: none;
+}
+
+.add-dish-shortcut-btn:hover {
+  background: var(--admin-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* ================= CONTROLS CARD ================= */
+
+.list-controls-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  box-shadow: var(--admin-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.list-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  padding: 10px 16px;
+  border-radius: 10px;
+  transition: border-color 0.2s ease;
+}
+
+.list-search-box:focus-within {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+}
+
+.list-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: var(--admin-dark);
+  width: 100%;
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  color: var(--admin-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.category-scroll-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.cat-filter-chip {
+  background: var(--admin-bg);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.cat-filter-chip:hover {
+  border-color: var(--admin-subtle);
+  color: var(--admin-dark);
+}
+
+.cat-filter-chip.active {
+  background: var(--admin-primary-light);
+  border-color: var(--admin-primary);
+  color: var(--admin-primary);
+  font-weight: 700;
+}
+
+/* ================= MODERN TABLE ================= */
+
+.list-table-container {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.modern-food-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.modern-food-table thead {
+  background: var(--admin-bg);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.modern-food-table th {
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--admin-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modern-food-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--admin-border);
+  vertical-align: middle;
+}
+
+.modern-food-table tr:last-child td {
+  border-bottom: none;
+}
+
+.modern-food-table tr:hover {
+  background: #fffcf9;
+}
+
+.dish-table-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+}
+
+.dish-table-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dish-name-cell {
+  font-size: 15px;
+  color: var(--admin-dark);
+  display: block;
+}
+
+.dish-desc-cell {
+  font-size: 12.5px;
+  color: var(--admin-muted);
+  margin-top: 3px;
+  max-width: 480px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dish-category-badge {
+  display: inline-block;
+  background: var(--admin-primary-light);
+  color: var(--admin-primary);
+  border: 1px solid var(--admin-primary-border);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.dish-price-cell {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--admin-dark);
+}
+
+.dish-delete-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dish-delete-action-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+}
+
+@media (max-width: 768px) {
+  .modern-food-table th:nth-child(3),
+  .modern-food-table td:nth-child(3) {
+    display: none;
+  }
+}

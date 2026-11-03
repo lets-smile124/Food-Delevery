@@ -1,15 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root {
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  
+  /* Brand palette aligned with CraveBox logo (warm terracotta / tangerine / amber) */
+  --crave-orange: #ea580c;
+  --crave-orange-hover: #c2410c;
+  --crave-orange-light: #fff7ed;
+  --crave-orange-border: #fed7aa;
+  
+  --crave-amber: #f59e0b;
+  --crave-amber-light: #fef3c7;
+  
+  /* Humanized warm neutrals */
+  --crave-dark: #1f1b16;
+  --crave-text: #2d2620;
+  --crave-muted: #6e6459;
+  --crave-light-muted: #9c9184;
+  
+  --crave-bg: #fcfaf7;
+  --crave-card: #ffffff;
+  --crave-surface: #f7f2eb;
+  --crave-border: #ede4d8;
+  --crave-border-soft: #f4eee6;
+  
+  /* Shadows */
+  --crave-shadow-sm: 0 2px 8px rgba(31, 27, 22, 0.04);
+  --crave-shadow-md: 0 8px 24px rgba(234, 88, 12, 0.08);
+  --crave-shadow-lg: 0 16px 36px rgba(31, 27, 22, 0.08);
+  --crave-shadow-hover: 0 14px 28px rgba(234, 88, 12, 0.16);
+}
 
 *{
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Outfit';
+  font-family: var(--font-body);
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body{
   min-height: 100vh;
+  background-color: var(--crave-bg);
+  color: var(--crave-text);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--crave-dark);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 a{
@@ -17,9 +60,26 @@ a{
   color: inherit;
 }
 
+button {
+  font-family: var(--font-body);
+}
+
 .app{
-  width : 80%;
+  width : 82%;
+  max-width: 1320px;
   margin: auto;
+}
+
+@media (max-width: 1050px) {
+  .app {
+    width: 90%;
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    width: 92%;
+  }
 }
 
 @keyframes fadeIn {

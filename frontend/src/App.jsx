@@ -12,6 +12,7 @@ import MyOrders from "./pages/MyOrders/MyOrders";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import AIAssistant from "./components/AIAssistant/AIAssistant";
 import Profile from "./pages/Profile/Profile";
+import FloatingCartBar from "./components/FloatingCartBar/FloatingCartBar";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -79,10 +80,11 @@ const App = () => {
             }
           />
         </Routes>
+        <FloatingCartBar setShowLogin={setShowLogin} />
         <AIAssistant isOpen={isAIOpen} setIsOpen={setIsAIOpen} />
       </div>
 
-      <Footer />
+      <Footer setShowLogin={setShowLogin} />
     </>
   );
 };

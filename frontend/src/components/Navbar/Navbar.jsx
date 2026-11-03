@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import Profile from "../../pages/Profile/Profile";
 
@@ -15,6 +15,58 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
     useContext(StoreContext);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Navigate to explore-menu smoothly from any page
+  const goToMenu = (e) => {
+    e.preventDefault();
+    setMenu("Menu");
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const el = document.getElementById("explore-menu");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 180);
+    } else {
+      const el = document.getElementById("explore-menu");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  // Navigate to contact/footer smoothly from any page
+  const goToContact = (e) => {
+    e.preventDefault();
+    if (!token) {
+      setShowLogin(true);
+      return;
+    }
+    setMenu("Contact us");
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const el = document.getElementById("footer");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 180);
+    } else {
+      const el = document.getElementById("footer");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  const goToHome = () => {
+    setMenu("Home");
+    if (location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   // Load recent searches
   useEffect(() => {
@@ -134,7 +186,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
 
           <Link
             to="/"
-            onClick={() => setMenu("Home")}
+            onClick={goToHome}
             className={menu === "Home" ? "active" : ""}
           >
             Home
@@ -142,7 +194,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
 
           <a
             href="#explore-menu"
-            onClick={() => setMenu("Menu")}
+            onClick={goToMenu}
             className={menu === "Menu" ? "active" : ""}
           >
             Menu
@@ -158,7 +210,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
 
           <a
             href="#footer"
-            onClick={() => setMenu("Contact us")}
+            onClick={goToContact}
             className={menu === "Contact us" ? "active" : ""}
           >
             Contact us
@@ -348,7 +400,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
           ) : (
             <div
               className="navbar-profile-btn"
-              onClick={() => setShowProfile(!showProfile)}
+              onClick={() => navigate('/profile')}
               title="My Account"
             >
               <div className="navbar-avatar-badge">
@@ -371,12 +423,7 @@ const Navbar = ({ setShowLogin, search, setSearch }) => {
 
       {/* ================= PROFILE POPUP ================= */}
 
-      {showProfile && (
-        <Profile
-          onClose={() => setShowProfile(false)}
-          onLogout={logout}
-        />
-      )}
+      
 
     </>
   );

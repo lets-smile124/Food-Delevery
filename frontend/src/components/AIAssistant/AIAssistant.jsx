@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import axios from "axios";
+import aiService from "../../services/AIService";
 import "./AIAssistant.css";
 import { StoreContext } from "../../context/StoreContext";
 
@@ -67,7 +67,7 @@ const AIAssistant = ({ isOpen, setIsOpen }) => {
     ]);
 
     try {
-      const response = await axios.post(`${url}/api/ai/chat`, {
+      const response = await aiService.client.post("/api/ai/chat", {
         message: userMessage,
       });
 

@@ -1,35 +1,99 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-*{
-  padding : 0;
-  margin : 0;
+:root {
+  --admin-primary: #ea580c;
+  --admin-primary-hover: #c2410c;
+  --admin-primary-light: #fff7ed;
+  --admin-primary-border: #fed7aa;
+  
+  --admin-dark: #0f172a;
+  --admin-text: #334155;
+  --admin-muted: #64748b;
+  --admin-subtle: #94a3b8;
+  
+  --admin-bg: #f8fafc;
+  --admin-surface: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-border-focus: #ea580c;
+  
+  --admin-success: #10b981;
+  --admin-success-light: #ecfdf5;
+  --admin-warning: #f59e0b;
+  --admin-warning-light: #fffbeb;
+  --admin-danger: #ef4444;
+  --admin-danger-light: #fef2f2;
+  --admin-info: #3b82f6;
+  --admin-info-light: #eff6ff;
+
+  --admin-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --admin-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --admin-shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08), 0 4px 10px -4px rgba(15, 23, 42, 0.04);
+}
+
+* {
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  font-family: Outfit;
+  font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
-body{
-  min-height : 100vh;
-  background-color: #fcfcfc;
+body {
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
+  -webkit-font-smoothing: antialiased;
 }
 
-a{
+a {
   text-decoration: none;
-  color : inherit
+  color: inherit;
 }
 
-hr{
+hr {
   border: none;
   height: 1px;
-  background-color: #a9a9a9;
+  background-color: var(--admin-border);
 }
 
-.app-content{
-  display : flex;
-}
-
-.flex-col{
+.app-container {
   display: flex;
   flex-direction: column;
-  gap : 10px;
+  min-height: 100vh;
 }
 
+.app-content {
+  display: flex;
+  flex: 1;
+}
+
+.admin-main-view {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1400px;
+  background: var(--admin-bg);
+  overflow-y: auto;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-main-view {
+    padding: 20px 16px;
+  }
+}

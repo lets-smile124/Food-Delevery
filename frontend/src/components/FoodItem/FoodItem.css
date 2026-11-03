@@ -1,81 +1,159 @@
-.food-item{
-    width : 100%;
-    margin : auto;
-    border-radius : 15px;
-    box-shadow : 0px 0px 10px #00000015;
-    transition : 0.3s;
-    animation : fadeIn 1s;
+.food-item {
+  width: 100%;
+  margin: auto;
+  border-radius: 18px;
+  box-shadow: var(--crave-shadow-sm);
+  border: 1.5px solid var(--crave-border-soft);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: fadeIn 0.4s ease;
+  cursor: pointer;
+  background-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.food-item-image{
-    width : 100%;
-    border-radius: 15px 15px 0px 0px;
-}
-.food-item-info{
-    padding : 20px;
+.food-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--crave-orange-border);
+  box-shadow: 0 14px 28px rgba(234, 88, 12, 0.14);
 }
 
-.food-item-name-rating{
-    display : flex;
-    justify-content : space-between;
-    align-items : center;
-    margin-bottom : 10px;
-}
-
-.food-item-name-rating p{
-    font-size : 20px;
-    font-weight : 500;
-}
-
-
-.food-item-name-rating img{
-   width : 70px;
-}
-
-.food-item-description{
-    color : #676767;
-    font-size : 12px;
-}
-
-.food-item-price{
-    color : tomato;
-    font-size : 22px;
-    font-weight : 500;
-    margin : 10px 0px;
-}
-.food-item-img-container{
-    position : relative;
-}
-
-.food-item-img-container .add{
-    width : 35px;
-    position: absolute;
-    bottom : 15px;
-    right : 15px;
-    cursor : pointer;
-    border-radius : 50%;
-}
-
-.food-item-counter{
-    position :absolute;
-    bottom : 15px;
-    right : 15px;
-    display: flex;
-    align-items: center;
-    gap : 10px;
-    padding : 6px;
-    border-radius : 50px;
-    background-color: white;
-}
-
-.food-item-counter img{
-    width : 30px;
+.food-item-img-container {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--crave-surface);
 }
 
 .food-item-image {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 15px 15px 0 0;
-    display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.food-item:hover .food-item-image {
+  transform: scale(1.04);
+}
+
+.food-item-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.food-item-size-pill {
+  background: rgba(31, 27, 22, 0.78);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+}
+
+.food-item-cart-badge {
+  background: #10b981;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.food-item-info {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.food-item-name-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.food-item-name-rating p {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--crave-dark);
+}
+
+.food-item-name-rating img {
+  width: 65px;
+  height: auto;
+}
+
+.food-item-desc {
+  color: var(--crave-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.food-item-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--crave-border-soft);
+}
+
+.food-item-price-from {
+  font-size: 11px;
+  color: var(--crave-light-muted);
+  display: block;
+}
+
+.food-item-price {
+  color: var(--crave-orange);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.food-item-price-standard {
+  font-size: 11px;
+  color: var(--crave-light-muted);
+}
+
+.food-item-customize-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--crave-orange);
+  background: var(--crave-orange-light);
+  border: 1px solid var(--crave-orange-border);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.food-item:hover .food-item-customize-btn {
+  background: var(--crave-orange);
+  color: #ffffff;
+  border-color: var(--crave-orange);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

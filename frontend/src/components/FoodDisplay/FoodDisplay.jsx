@@ -1,20 +1,20 @@
-import React, { useContext } from 'react'
-import './FoodDisplay.css'
-import { StoreContext } from '../../context/StoreContext'
-import FoodItem from '../FoodItem/FoodItem'
+import React, { useContext, useState } from 'react';
+import './FoodDisplay.css';
+import { StoreContext } from '../../context/StoreContext';
+import FoodItem from '../FoodItem/FoodItem';
+import FoodDetailModal from '../FoodDetailModal/FoodDetailModal';
 
 const FoodDisplay = ({
   category,
   setShowLogin,
   search
 }) => {
-
   const { food_list } = useContext(StoreContext);
+  const [selectedFood, setSelectedFood] = useState(null);
 
-  const searchText = search.trim().toLowerCase();
+  const searchText = (search || "").trim().toLowerCase();
 
   const filteredFood = food_list.filter((item) => {
-
     const matchesCategory =
       category === "All" ||
       category === item.category;
@@ -33,7 +33,6 @@ const FoodDisplay = ({
       className='food-display'
       id='food-display'
     >
-
       <h2>
         {searchText
           ? `Search results for "${search}"`
@@ -42,11 +41,8 @@ const FoodDisplay = ({
       </h2>
 
       <div className="food-display-list">
-
         {filteredFood.length > 0 ? (
-
           filteredFood.map((item) => (
-
             <FoodItem
               key={item._id}
               id={item._id}
@@ -54,23 +50,28 @@ const FoodDisplay = ({
               description={item.description}
               price={item.price}
               image={item.image}
+              category={item.category}
               setShowLogin={setShowLogin}
+              onCardClick={() => setSelectedFood(item)}
             />
-
           ))
-
         ) : (
-
           <p className="no-food-found">
             No food found for "{search}"
           </p>
-
         )}
-
       </div>
 
+      {/* Enlarged Food Detail & Size Selection Modal */}
+      {selectedFood && (
+        <FoodDetailModal
+          food={selectedFood}
+          onClose={() => setSelectedFood(null)}
+          setShowLogin={setShowLogin}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default FoodDisplay
+export default FoodDisplay;

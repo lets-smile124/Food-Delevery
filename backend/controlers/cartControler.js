@@ -1,79 +1,87 @@
-import userModel from "../models/userModel.js"
+import userModel from "../models/userModel.js";
+import BaseController from "./BaseController.js";
 
-//// add items to user cart
-const addToCart = async (req,res) =>{
-  try{
-     let userData = await userModel.findById(req.body.userId);
-     let cartData = userData.cartData;
-     if(!cartData[req.body.itemId]){
-        cartData[req.body.itemId] = 1;
-     }else{
-         cartData[req.body.itemId] += 1;
-     }
-     await userModel.findByIdAndUpdate(req.body.userId,{cartData});
-     res.json({success:true , message:"Added to cart"});
-  }catch(error){
-     console.log(error);
-     res.json({success:false , message:"Error"})
+class CartController extends BaseController {
+  constructor(model = userModel) {
+    super();
+    this.userModel = model;
   }
-}
 
+  /**
+   * Add item to user cart
+   */
+  addToCart = async (req, res) => {
+    try {
+      const userData = await this.userModel.findById(req.body.userId);
+      const cartData = (userData && userData.cartData) ? { ...userData.cartData } : {};
 
-/// remove items from user cart
+      if (!cartData[req.body.itemId]) {
+        cartData[req.body.itemId] = 1;
+      } else {
+        cartData[req.body.itemId] += 1;
+      }
 
-const removeFromCart = async (req,res) =>{
-  try{
-      let userData = await userModel.findById((req.body.userId))
-      let cartData = await userData.cartData;
-      if(cartData[req.body.itemId]>0){
+      await this.userModel.findByIdAndUpdate(req.body.userId, { cartData });
+      return this.sendSuccess(res, "Added to cart");
+    } catch (error) {
+      return this.handleError(res, error, "Error");
+    }
+  };
+
+  /**
+   * Remove item from user cart
+   */
+  removeFromCart = async (req, res) => {
+    try {
+      const userData = await this.userModel.findById(req.body.userId);
+      const cartData = (userData && userData.cartData) ? { ...userData.cartData } : {};
+
+      if (cartData[req.body.itemId] > 0) {
         cartData[req.body.itemId] -= 1;
       }
-      await userModel.findByIdAndUpdate(req.body.userId,{cartData});
-      res.json({success:true , message : "Removed from cart"})
-  }catch(error){
-      console.log(error);
-      res.json({success:false , message : "Error"})
-  }
-}
 
-///fetch user cart data
+      await this.userModel.findByIdAndUpdate(req.body.userId, { cartData });
+      return this.sendSuccess(res, "Removed from cart");
+    } catch (error) {
+      return this.handleError(res, error, "Error");
+    }
+  };
 
-const getCart = async (req, res) => {
-  try {
+  /**
+   * Fetch user cart data
+   */
+  getCart = async (req, res) => {
+    try {
+      console.log("USER ID:", req.body.userId);
+      const userData = await this.userModel.findById(req.body.userId);
 
-    console.log("USER ID:", req.body.userId);
+      if (!userData) {
+        return res.json({
+          success: false,
+          message: "User not found",
+          cartData: {}
+        });
+      }
 
-    let userData = await userModel.findById(req.body.userId);
+      const cartData = userData.cartData || {};
 
-    console.log("USER DATA:", userData);
-
-    if (!userData) {
+      return this.sendSuccess(res, { cartData });
+    } catch (error) {
+      console.log("GET CART ERROR:", error);
       return res.json({
         success: false,
-        message: "User not found",
+        message: "Error",
         cartData: {}
       });
     }
+  };
+}
 
-    let cartData = userData.cartData || {};
+const cartController = new CartController();
 
-    console.log("CART DATA:", cartData);
+export const addToCart = cartController.addToCart;
+export const removeFromCart = cartController.removeFromCart;
+export const getCart = cartController.getCart;
 
-    res.json({
-      success: true,
-      cartData
-    });
-
-  } catch (error) {
-
-    console.log("GET CART ERROR:", error);
-
-    res.json({
-      success: false,
-      message: "Error",
-      cartData: {}
-    });
-  }
-};
-
-export {addToCart,removeFromCart,getCart}
+export default cartController;
+export { CartController };

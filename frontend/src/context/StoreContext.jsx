@@ -1,5 +1,10 @@
 import { createContext, useEffect, useState } from "react";
-import axios from "axios";
+import foodService from "../services/FoodService";
+import cartService from "../services/CartService";
+import userService from "../services/UserService";
+import orderService from "../services/OrderService";
+import FoodPricingService from "../services/FoodPricingService";
+import CartCalculator from "../utils/CartCalculator";
 
 export const StoreContext = createContext(null);
 
@@ -9,106 +14,145 @@ const StoreContextProvider = (props) => {
   // =========================
 
   const [cartItems, setCartItems] = useState({});
-
   const [food_list, setFoodList] = useState([]);
-
   const [token, setToken] = useState("");
   const [userData, setUserData] = useState(null);
 
-  // Used to prevent ProtectedRoute
-  // from checking token before localStorage is loaded
+  // Used to prevent ProtectedRoute from checking token before localStorage is loaded
   const [authLoading, setAuthLoading] = useState(true);
+
+  // Promo code states
+  const [appliedPromo, setAppliedPromo] = useState("");
+  const [promoDiscountRate, setPromoDiscountRate] = useState(0);
+
+  const applyPromoCode = async (code) => {
+    const cleanCode = (code || "").trim().toUpperCase();
+
+    if (!token) {
+      return {
+        success: false,
+        message: "Please sign in to apply coupon code 'NEW_USER'.",
+      };
+    }
+
+    if (cleanCode !== "NEW_USER") {
+      return {
+        success: false,
+        message: "Invalid promo code. Enter 'NEW_USER' for your first order discount.",
+      };
+    }
+
+    try {
+      const res = await orderService.validatePromo(cleanCode, token);
+      if (res.success) {
+        setAppliedPromo(cleanCode);
+        setPromoDiscountRate(res.data?.discountRate || 0.20);
+        return {
+          success: true,
+          discountRate: res.data?.discountRate || 0.20,
+          message: res.message || res.data?.message || "20% first-order discount applied! 🎉",
+        };
+      } else {
+        removePromoCode();
+        return {
+          success: false,
+          message: res.message || "Coupon is not applicable.",
+        };
+      }
+    } catch (err) {
+      removePromoCode();
+      return {
+        success: false,
+        message:
+          err.response?.data?.message ||
+          "Coupon 'NEW_USER' is only valid on your first order. You have already placed previous orders.",
+      };
+    }
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo("");
+    setPromoDiscountRate(0);
+  };
+
+  const getDiscountAmount = () => {
+    const subtotal = CartCalculator.calculateTotal(cartItems, food_list);
+    return Math.round(subtotal * promoDiscountRate);
+  };
+
+  const getFinalTotal = () => {
+    const subtotal = CartCalculator.calculateTotal(cartItems, food_list);
+    if (subtotal === 0) return 0;
+    const discount = getDiscountAmount();
+    return Math.max(0, subtotal - discount + 2);
+  };
 
   // Backend URL (strips any trailing slash automatically)
   const url = (import.meta.env.VITE_API_URL || "http://localhost:4000").replace(/\/+$/, "");
 
   // =========================
-  // ADD TO CART
+  // ADD TO CART (with size support)
   // =========================
 
-  const addToCart = async (itemId) => {
-    // User must be logged in
+  const addToCart = async (itemId, size = "Medium") => {
     if (!token) {
       return false;
     }
 
-    // Update UI immediately
-    if (!cartItems[itemId]) {
-      setCartItems((prev) => ({
-        ...prev,
-        [itemId]: 1,
-      }));
-    } else {
-      setCartItems((prev) => ({
-        ...prev,
-        [itemId]: prev[itemId] + 1,
-      }));
-    }
+    const cartKey = itemId.includes("_")
+      ? itemId
+      : FoodPricingService.getCartKey(itemId, size);
+
+    // Update UI immediately (optimistic update)
+    setCartItems((prev) => ({
+      ...prev,
+      [cartKey]: (prev[cartKey] || 0) + 1,
+    }));
 
     try {
-      // Save cart in backend
-      await axios.post(
-        url + "/api/cart/add",
-        { itemId },
-        {
-          headers: {
-            token,
-          },
-        },
-      );
-
+      await cartService.addToCart(cartKey, token);
       return true;
     } catch (error) {
       console.log("Add to cart error:", error.response?.data || error.message);
-
       return false;
     }
   };
 
   // =========================
-  // REMOVE FROM CART
+  // REMOVE FROM CART (with size support)
   // =========================
 
-  const removeFromCart = async (itemId) => {
-    // User must be logged in
+  const removeFromCart = async (itemId, size = "Medium") => {
     if (!token) {
       return false;
     }
+
+    const cartKey = itemId.includes("_")
+      ? itemId
+      : FoodPricingService.getCartKey(itemId, size);
 
     // Update UI immediately
     setCartItems((prev) => {
       const updatedCart = {
         ...prev,
-        [itemId]: prev[itemId] - 1,
+        [cartKey]: (prev[cartKey] || 0) - 1,
       };
 
-      // Optional cleanup
-      if (updatedCart[itemId] <= 0) {
-        delete updatedCart[itemId];
+      if (updatedCart[cartKey] <= 0) {
+        delete updatedCart[cartKey];
       }
 
       return updatedCart;
     });
 
     try {
-      // Update backend
-      await axios.post(
-        url + "/api/cart/remove",
-        { itemId },
-        {
-          headers: {
-            token,
-          },
-        },
-      );
-
+      await cartService.removeFromCart(cartKey, token);
       return true;
     } catch (error) {
       console.log(
         "Remove from cart error:",
         error.response?.data || error.message,
       );
-
       return false;
     }
   };
@@ -118,20 +162,21 @@ const StoreContextProvider = (props) => {
   // =========================
 
   const getTotalCartAmount = () => {
-    let totalAmount = 0;
+    return CartCalculator.calculateTotal(cartItems, food_list);
+  };
 
-    for (const item in cartItems) {
-      if (cartItems[item] > 0) {
-        const itemInfo = food_list.find((product) => product._id === item);
+  /**
+   * Helper to get total count of food item in cart across all sizes
+   */
+  const getItemTotalQuantity = (foodId) => {
+    return CartCalculator.getFoodTotalQuantity(cartItems, foodId);
+  };
 
-        // Prevent undefined.price error
-        if (itemInfo) {
-          totalAmount += itemInfo.price * cartItems[item];
-        }
-      }
-    }
-
-    return totalAmount;
+  /**
+   * Helper to get count of food item in cart for a specific size
+   */
+  const getItemSizeQuantity = (foodId, size = "Medium") => {
+    return CartCalculator.getFoodSizeQuantity(cartItems, foodId, size);
   };
 
   // =========================
@@ -140,16 +185,15 @@ const StoreContextProvider = (props) => {
 
   const fetchFoodList = async () => {
     try {
-      const response = await axios.get(url + "/api/food/list");
+      const data = await foodService.getFoodList();
 
-      if (response.data.success) {
-        setFoodList(response.data.data || []);
+      if (data.success) {
+        setFoodList(data.data || []);
       } else {
         setFoodList([]);
       }
     } catch (error) {
       console.log("Food list error:", error.response?.data || error.message);
-
       setFoodList([]);
     }
   };
@@ -160,24 +204,15 @@ const StoreContextProvider = (props) => {
 
   const loadCartData = async (userToken) => {
     try {
-      const response = await axios.post(
-        url + "/api/cart/get",
-        {},
-        {
-          headers: {
-            token: userToken,
-          },
-        },
-      );
+      const data = await cartService.getCart(userToken);
 
-      if (response.data.success) {
-        setCartItems(response.data.cartData || {});
+      if (data.success) {
+        setCartItems(data.cartData || {});
       } else {
         setCartItems({});
       }
     } catch (error) {
       console.log("Load cart error:", error.response?.data || error.message);
-
       setCartItems({});
     }
   };
@@ -194,17 +229,13 @@ const StoreContextProvider = (props) => {
     }
 
     try {
-      const response = await axios.get(url + "/api/user/profile", {
-        headers: {
-          token: activeToken,
-        },
-      });
+      const data = await userService.getProfile(activeToken);
 
-      if (response.data.success) {
-        setUserData(response.data.user);
-        return response.data.user;
+      if (data.success) {
+        setUserData(data.user);
+        return data.user;
       } else {
-        console.log("Fetch profile message:", response.data.message);
+        console.log("Fetch profile message:", data.message);
       }
     } catch (error) {
       console.log("Fetch user profile error:", error.response?.data || error.message);
@@ -216,21 +247,13 @@ const StoreContextProvider = (props) => {
     if (!token) return { success: false, message: "Not authenticated" };
 
     try {
-      const response = await axios.post(
-        url + "/api/user/update-profile",
-        updatedFields,
-        {
-          headers: {
-            token,
-          },
-        }
-      );
+      const data = await userService.updateProfile(updatedFields, token);
 
-      if (response.data.success) {
-        setUserData(response.data.user);
-        return { success: true, message: response.data.message, user: response.data.user };
+      if (data.success) {
+        setUserData(data.user);
+        return { success: true, message: data.message, user: data.user };
       }
-      return { success: false, message: response.data.message || "Failed to update" };
+      return { success: false, message: data.message || "Failed to update" };
     } catch (error) {
       console.log("Update profile error:", error);
       return {
@@ -247,30 +270,23 @@ const StoreContextProvider = (props) => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // First load food list
         await fetchFoodList();
 
-        // Check localStorage
         const savedToken = localStorage.getItem("token");
 
         if (savedToken) {
-          // Store token in React state
           setToken(savedToken);
-
-          // Load user's cart & profile
           await Promise.all([
             loadCartData(savedToken),
             fetchUserProfile(savedToken),
           ]);
         } else {
-          // No user logged in
           setCartItems({});
           setUserData(null);
         }
       } catch (error) {
         console.log("Initial loading error:", error);
       } finally {
-        // Authentication check finished
         setAuthLoading(false);
       }
     };
@@ -303,6 +319,16 @@ const StoreContextProvider = (props) => {
     addToCart,
     removeFromCart,
     getTotalCartAmount,
+    getItemTotalQuantity,
+    getItemSizeQuantity,
+
+    // Promo & Discounts
+    appliedPromo,
+    promoDiscountRate,
+    applyPromoCode,
+    removePromoCode,
+    getDiscountAmount,
+    getFinalTotal,
 
     // Backend URL
     url,

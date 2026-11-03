@@ -1,16 +1,38 @@
-import React, { useState } from 'react'
-import './Home.css'
-import Header from '../../components/Header/Header'
-import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
-import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
-import AIExperience from '../../components/AIExperience/AIExperience'
+import React, { useState, useContext } from 'react';
+import './Home.css';
+import Header from '../../components/Header/Header';
+import ExploreMenu from '../../components/ExploreMenu/ExploreMenu';
+import FoodDisplay from '../../components/FoodDisplay/FoodDisplay';
+import GuestLanding from '../../components/GuestLanding/GuestLanding';
+import { StoreContext } from '../../context/StoreContext';
 
-const Home = ({ setShowLogin, search , onAskAI}) => {
+const Home = ({ setShowLogin, search, onAskAI }) => {
+  const [category, setCategory] = useState("All");
+  const { token, authLoading } = useContext(StoreContext);
 
-  const [category, setCategory] = useState("All")
+  // If still checking localStorage auth token, show a smooth loading state
+  if (authLoading) {
+    return (
+      <div className="home-auth-loader">
+        <div className="loader-spinner"></div>
+        <p>Setting up your dining experience...</p>
+      </div>
+    );
+  }
 
+  // If user is not logged in / registered, show the rich interactive guest landing page
+  if (!token) {
+    return (
+      <GuestLanding
+        setShowLogin={setShowLogin}
+        onExploreMenu={() => setShowLogin(true)}
+      />
+    );
+  }
+
+  // Authenticated user experience: full menu, carousel, and food display (AIExperience box removed)
   return (
-    <div>
+    <div className="home-authenticated">
       <Header />
 
       <ExploreMenu
@@ -23,10 +45,8 @@ const Home = ({ setShowLogin, search , onAskAI}) => {
         setShowLogin={setShowLogin}
         search={search}
       />
-
-      <AIExperience onAskAI={onAskAI} />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

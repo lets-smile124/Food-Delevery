@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "./FoodItem.css";
 import { assets } from "../../assets/assets";
 import { StoreContext } from "../../context/StoreContext";
+import FoodPricingService from "../../services/FoodPricingService";
 
 const FoodItem = ({
   id,
@@ -9,50 +10,28 @@ const FoodItem = ({
   price,
   description,
   image,
-  setShowLogin
+  category,
+  onCardClick,
 }) => {
-
   const {
     cartItems,
-    addToCart,
-    removeFromCart,
+    getItemTotalQuantity,
     url,
-    token
   } = useContext(StoreContext);
 
+  const totalQuantity = getItemTotalQuantity
+    ? getItemTotalQuantity(id)
+    : cartItems?.[id] || 0;
 
-  const handleAddToCart = async () => {
-
-    console.log("ADD CLICKED");
-    console.log("token:", token);
-    console.log("setShowLogin:", setShowLogin);
-
-    if (!token) {
-      console.log("User not logged in → opening popup");
-      setShowLogin(true);
-      return;
-    }
-
-    await addToCart(id);
-  };
-
-
-  const handleRemoveFromCart = async () => {
-
-    if (!token) {
-      setShowLogin(true);
-      return;
-    }
-
-    await removeFromCart(id);
-  };
-
+  const smallPrice = FoodPricingService.getPrice(price, "Small");
 
   return (
-    <div className="food-item">
-
+    <div
+      className="food-item"
+      onClick={onCardClick}
+      title="Click to view details & select size"
+    >
       <div className="food-item-img-container">
-
         <img
           className="food-item-image"
           src={
@@ -63,56 +42,31 @@ const FoodItem = ({
           alt={name}
         />
 
-        {!cartItems?.[id] ? (
-
-          <img
-            className="add"
-            onClick={handleAddToCart}
-            src={assets.add_icon_white}
-            alt=""
-          />
-
-        ) : (
-
-          <div className="food-item-counter">
-
-            <img
-              onClick={handleRemoveFromCart}
-              src={assets.remove_icon_red}
-              alt=""
-            />
-
-            <p>{cartItems[id]}</p>
-
-            <img
-              onClick={handleAddToCart}
-              src={assets.add_icon_green}
-              alt=""
-            />
-
+        {totalQuantity > 0 && (
+          <div className="food-item-badges">
+            <span className="food-item-cart-badge">
+              ✓ {totalQuantity} in cart
+            </span>
           </div>
-
         )}
-
       </div>
 
       <div className="food-item-info">
-
         <div className="food-item-name-rating">
           <p>{name}</p>
-          <img src={assets.rating_starts} alt="" />
+          <img src={assets.rating_starts} alt="Rating" />
         </div>
 
-        <p className="food-item-desc">
-          {description}
-        </p>
+        <p className="food-item-desc">{description}</p>
 
-        <p className="food-item-price">
-          ₹{price}
-        </p>
-
+        <div className="food-item-price-row">
+          <div>
+            <span className="food-item-price-from">From </span>
+            <span className="food-item-price">₹{smallPrice}</span>
+          </div>
+          <span className="food-item-customize-btn">Select Size &gt;</span>
+        </div>
       </div>
-
     </div>
   );
 };
